@@ -12612,46 +12612,31 @@ Elm.SignupForm.make = function (_elm) {
    $Signal = Elm.Signal.make(_elm),
    $StartApp = Elm.StartApp.make(_elm),
    $Time = Elm.Time.make(_elm);
-   var getErrors = function (model) {
-      return {_: {}
-             ,password: _U.eq(model.password,
-             "") ? "Please enter a password!" : ""
-             ,username: _U.eq(model.username,
-             "") ? "Please enter a username!" : ""};
-   };
-   var initialErrors = {_: {}
-                       ,password: ""
-                       ,username: ""};
+   var initialModel = {_: {}
+                      ,username: ""};
    var update = F2(function (action,
    model) {
-      return _U.eq(action.actionType,
-      "VALIDATE") ? {ctor: "_Tuple2"
-                    ,_0: _U.replace([["errors"
-                                     ,getErrors(model)]],
-                    model)
-                    ,_1: $Effects.none} : _U.eq(action.actionType,
-      "NOOP") ? {ctor: "_Tuple2"
-                ,_0: model
-                ,_1: $Effects.none} : _U.eq(action.actionType,
-      "SET_USERNAME") ? {ctor: "_Tuple2"
-                        ,_0: _U.replace([["username"
-                                         ,action.payload]
-                                        ,["errors",initialErrors]],
-                        model)
-                        ,_1: $Effects.none} : _U.eq(action.actionType,
-      "SET_PASSWORD") ? {ctor: "_Tuple2"
-                        ,_0: _U.replace([["password"
-                                         ,action.payload]
-                                        ,["errors",initialErrors]],
-                        model)
-                        ,_1: $Effects.none} : {ctor: "_Tuple2"
-                                              ,_0: model
-                                              ,_1: $Effects.none};
+      return function () {
+         switch (action.ctor)
+         {case "NoOp":
+            return {ctor: "_Tuple2"
+                   ,_0: model
+                   ,_1: $Effects.none};
+            case "SetUsername":
+            return {ctor: "_Tuple2"
+                   ,_0: _U.replace([["username"
+                                    ,action._0]],
+                   model)
+                   ,_1: $Effects.none};}
+         _U.badCase($moduleName,
+         "between lines 42 and 44");
+      }();
    });
-   var initialModel = {_: {}
-                      ,errors: initialErrors
-                      ,password: ""
-                      ,username: ""};
+   var SetUsername = function (a) {
+      return {ctor: "SetUsername"
+             ,_0: a};
+   };
+   var NoOp = {ctor: "NoOp"};
    var view = F2(function (actionDispatcher,
    model) {
       return A2($Html.form,
@@ -12677,49 +12662,13 @@ Elm.SignupForm.make = function (_elm) {
                                 ,A3($Html$Events.on,
                                 "input",
                                 $Html$Events.targetValue,
-                                function (str) {
-                                   return A2($Signal.message,
-                                   actionDispatcher,
-                                   {_: {}
-                                   ,actionType: "SET_USERNAME"
-                                   ,payload: str});
+                                function ($) {
+                                   return $Signal.message(actionDispatcher)(SetUsername($));
                                 })]),
                    _L.fromArray([]))
-                   ,A2($Html.div,
-                   _L.fromArray([$Html$Attributes.$class("validation-error")]),
-                   _L.fromArray([$Html.text(model.errors.username)]))
-                   ,A2($Html.label,
-                   _L.fromArray([$Html$Attributes.$for("password")]),
-                   _L.fromArray([$Html.text("password: ")]))
-                   ,A2($Html.input,
-                   _L.fromArray([$Html$Attributes.id("password-field")
-                                ,$Html$Attributes.type$("password")
-                                ,$Html$Attributes.value(model.password)
-                                ,A3($Html$Events.on,
-                                "input",
-                                $Html$Events.targetValue,
-                                function (str) {
-                                   return A2($Signal.message,
-                                   actionDispatcher,
-                                   {_: {}
-                                   ,actionType: "SET_PASSWORD"
-                                   ,payload: str});
-                                })]),
-                   _L.fromArray([]))
-                   ,A2($Html.div,
-                   _L.fromArray([$Html$Attributes.$class("validation-error")]),
-                   _L.fromArray([$Html.text(model.errors.password)]))
-                   ,A2($Html.div,
-                   _L.fromArray([$Html$Attributes.$class("signup-button")
-                                ,A2($Html$Events.onClick,
-                                actionDispatcher,
-                                {_: {}
-                                ,actionType: "VALIDATE"
-                                ,payload: ""})]),
-                   _L.fromArray([$Html.text("Sign Up!")]))
                    ,A2($Html.p,
                    _L.fromArray([]),
-                   _L.fromArray([$Html.text("Type something into the username field above. Then move the cursor to the start of the box, and type fast (or just mash at the keyboard). Fairly quickly, you\'ll see the cursor magically jumps to the end of the input box. When the FPS action gets processed out of sequence with the `on \'input\'` action. The field below will not exhibit this bug.")]))
+                   _L.fromArray([$Html.text("Type something into the username field above. Then move the cursor to the start of the box, and type fast (or just mash at the keyboard). Fairly quickly, you\'ll see the cursor magically jumps to the end of the input box. This is because the input event is triggering a change to the model, which triggers a change to the field value. This works fine as long as the whole thing is processed before the next input event triggers. By including an FPS signal, we can slow the system down enough to When the FPS action gets processed out of sequence with the `on \'input\'` action. The field below will not exhibit this bug because the value is only set on first .")]))
                    ,A2($Html.label,
                    _L.fromArray([$Html$Attributes.$for("safe")]),
                    _L.fromArray([$Html.text("safe: ")]))
@@ -12732,12 +12681,8 @@ Elm.SignupForm.make = function (_elm) {
                                 ,A3($Html$Events.on,
                                 "input",
                                 $Html$Events.targetValue,
-                                function (str) {
-                                   return A2($Signal.message,
-                                   actionDispatcher,
-                                   {_: {}
-                                   ,actionType: "SET_USERNAME"
-                                   ,payload: str});
+                                function ($) {
+                                   return $Signal.message(actionDispatcher)(SetUsername($));
                                 })]),
                    _L.fromArray([]))]));
    });
@@ -12746,11 +12691,9 @@ Elm.SignupForm.make = function (_elm) {
                                     ,_0: initialModel
                                     ,_1: $Effects.none}
                              ,inputs: _L.fromArray([A2($Signal._op["<~"],
-                             function (_v0) {
+                             function (_v2) {
                                 return function () {
-                                   return {_: {}
-                                          ,actionType: "NOOP"
-                                          ,payload: ""};
+                                   return NoOp;
                                 }();
                              },
                              $Time.fps(30))])
@@ -12759,8 +12702,8 @@ Elm.SignupForm.make = function (_elm) {
    var main = app.html;
    _elm.SignupForm.values = {_op: _op
                             ,view: view
-                            ,initialErrors: initialErrors
-                            ,getErrors: getErrors
+                            ,NoOp: NoOp
+                            ,SetUsername: SetUsername
                             ,update: update
                             ,initialModel: initialModel
                             ,app: app
