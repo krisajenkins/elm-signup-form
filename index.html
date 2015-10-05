@@ -12629,14 +12629,13 @@ Elm.SignupForm.make = function (_elm) {
                    model)
                    ,_1: $Effects.none};}
          _U.badCase($moduleName,
-         "between lines 42 and 44");
+         "between lines 53 and 55");
       }();
    });
    var SetUsername = function (a) {
       return {ctor: "SetUsername"
              ,_0: a};
    };
-   var NoOp = {ctor: "NoOp"};
    var view = F2(function (actionDispatcher,
    model) {
       return A2($Html.form,
@@ -12644,17 +12643,12 @@ Elm.SignupForm.make = function (_elm) {
                    ,$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
                                                          ,_0: "margin"
                                                          ,_1: "20px"}]))]),
-      _L.fromArray([A2($Html.div,
+      _L.fromArray([A2($Html.h1,
                    _L.fromArray([]),
-                   _L.fromArray([A2($Html.code,
-                   _L.fromArray([]),
-                   _L.fromArray([$Html.text($Basics.toString(model))]))]))
-                   ,A2($Html.h1,
-                   _L.fromArray([]),
-                   _L.fromArray([$Html.text("Sensational Signup Form")]))
+                   _L.fromArray([$Html.text("Form")]))
                    ,A2($Html.label,
                    _L.fromArray([$Html$Attributes.$for("username-field")]),
-                   _L.fromArray([$Html.text("username: ")]))
+                   _L.fromArray([$Html.text("unstable: ")]))
                    ,A2($Html.input,
                    _L.fromArray([$Html$Attributes.id("username-field")
                                 ,$Html$Attributes.type$("text")
@@ -12668,12 +12662,12 @@ Elm.SignupForm.make = function (_elm) {
                    _L.fromArray([]))
                    ,A2($Html.p,
                    _L.fromArray([]),
-                   _L.fromArray([$Html.text("Type something into the username field above. Then move the cursor to the start of the box, and type fast (or just mash at the keyboard). Fairly quickly, you\'ll see the cursor magically jumps to the end of the input box. This is because the input event is triggering a change to the model, which triggers a change to the field value. This works fine as long as the whole thing is processed before the next input event triggers. By including an FPS signal, we can slow the system down enough to When the FPS action gets processed out of sequence with the `on \'input\'` action. The field below will not exhibit this bug because the value is only set on first .")]))
+                   _L.fromArray([$Html.text("Type something into the field\n                      above. Then move the cursor to the start of the box, and type\n                      fast (or just mash at the keyboard). Fairly quickly, you\'ll\n                      see the cursor magically jumps to the end of the input\n                      box. The field below does not exhibit this bug because there\'s\n                      no conflict between the user setting the value and the\n                      model.")]))
                    ,A2($Html.label,
-                   _L.fromArray([$Html$Attributes.$for("safe")]),
-                   _L.fromArray([$Html.text("safe: ")]))
+                   _L.fromArray([$Html$Attributes.$for("stable")]),
+                   _L.fromArray([$Html.text("stable: ")]))
                    ,A2($Html.input,
-                   _L.fromArray([$Html$Attributes.id("safe-field")
+                   _L.fromArray([$Html$Attributes.id("stable-field")
                                 ,$Html$Attributes.type$("test")
                                 ,A2($Html$Attributes.property,
                                 "defaultValue",
@@ -12686,6 +12680,7 @@ Elm.SignupForm.make = function (_elm) {
                                 })]),
                    _L.fromArray([]))]));
    });
+   var NoOp = {ctor: "NoOp"};
    var app = $StartApp.start({_: {}
                              ,init: {ctor: "_Tuple2"
                                     ,_0: initialModel
@@ -12700,10 +12695,14 @@ Elm.SignupForm.make = function (_elm) {
                              ,update: update
                              ,view: view});
    var main = app.html;
+   var Model = function (a) {
+      return {_: {},username: a};
+   };
    _elm.SignupForm.values = {_op: _op
-                            ,view: view
+                            ,Model: Model
                             ,NoOp: NoOp
                             ,SetUsername: SetUsername
+                            ,view: view
                             ,update: update
                             ,initialModel: initialModel
                             ,app: app
